@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Research Paper Repository System</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1117;
+    --paper: #f7f3ee;
+    --cream: #ede8e0;
+    --gold: #c9a84c;
+    --gold-light: #e8c96a;
+    --rust: #8b3a2a;
+    --teal: #1a5f6e;
+    --teal-light: #2a8a9e;
+    --muted: #6b6560;
+    --border: #d4cfc8;
+    --white: #ffffff;
+    --shadow: 0 4px 24px rgba(13,17,23,0.10);
+    --shadow-lg: 0 12px 48px rgba(13,17,23,0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── PAGES ── */
+  .page { display: none; animation: fadeIn 0.4s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ════════════════════════════════
+     LOGIN PAGE
+  ════════════════════════════════ */
+  #loginPage {
+    min-height: 100vh;
+    display: none;
+    align-items: stretch;
+  }
+  #loginPage.active { display: flex; }
+
+  .login-left {
+    flex: 1;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .login-left::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,0.18), transparent 70%);
+  }
+  .login-left::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -60px;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(26,95,110,0.25), transparent 70%);
+  }
+  .login-brand {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 56px;
+  }
+  .login-brand-icon {
+    width: 48px; height: 48px;
+    background: var(--gold);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .login-brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+  }
+  .login-brand-name span { color: var(--gold); font-size: 12px; font-family: 'DM Mono', monospace; display: block; font-weight: 400; letter-spacing: 0.12em; }
+  .login-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px; font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+  .login-headline em { color: var(--gold); font-style: normal; }
+  .login-sub { font-size: 15px; color: rgba(247,243,238,0.6); line-height: 1.7; max-width: 340px; }
+  .login-stats {
+    display: flex; gap: 32px; margin-top: 56px;
+  }
+  .stat-item { }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--gold); }
+  .stat-label { font-size: 12px; color: rgba(247,243,238,0.5); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
+
+  .login-right {
+    width: 480px;
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 48px;
+  }
+  .login-right h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .login-right p { font-size: 14px; color: var(--muted); margin-bottom: 36px; }
+
+  .form-group { margin-bottom: 20px; }
+  .form-group label {
+    display: block;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    background: var(--paper);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  .form-group input:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(26,95,110,0.10);
+  }
+  .form-options {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 24px; font-size: 13px;
+  }
+  .form-options label { display: flex; align-items: center; gap: 8px; color: var(--muted); cursor: pointer; font-weight: 400; letter-spacing: 0; text-transform: none; font-size: 13px; }
+  .form-options a { color: var(--teal); text-decoration: none; font-weight: 500; }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary:hover { background: var(--teal); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .login-divider { text-align: center; color: var(--border); font-size: 12px; margin: 20px 0; letter-spacing: 0.1em; text-transform: uppercase; }
+  .role-select {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    margin-bottom: 24px;
+  }
+  .role-btn {
+    padding: 12px; border: 1.5px solid var(--border); border-radius: 8px;
+    background: var(--paper); cursor: pointer; text-align: center;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    color: var(--muted); transition: all 0.2s;
+  }
+  .role-btn:hover, .role-btn.active {
+    border-color: var(--teal); color: var(--teal);
+    background: rgba(26,95,110,0.06);
+  }
+  .role-btn .role-icon { font-size: 18px; display: block; margin-bottom: 4px; }
+  .error-msg { color: var(--rust); font-size: 13px; margin-top: -12px; margin-bottom: 12px; display: none; }
+
+  /* ════════════════════════════════
+     MAIN APP (after login)
+  ════════════════════════════════ */
+  #appPage { display: none; min-height: 100vh; }
+  #appPage.active { display: flex; flex-direction: column; }
+
+  /* TOPBAR */
+  .topbar {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0 32px;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .topbar-brand {
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; font-weight: 700;
+  }
+  .topbar-brand-icon {
+    width: 36px; height: 36px;
+    background: var(--gold);
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .topbar-nav {
+    display: flex; align-items: center; gap: 4px;
+  }
+  .nav-item {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px; font-weight: 500;
+    color: rgba(247,243,238,0.6);
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none; background: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .nav-item:hover { color: var(--paper); background: rgba(255,255,255,0.06); }
+  .nav-item.active { color: var(--gold); background: rgba(201,168,76,0.10); }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .topbar-search {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 20px;
+    padding: 8px 16px;
+    display: flex; align-items: center; gap: 8px;
+    color: rgba(247,243,238,0.6);
+    font-size: 13px;
+    cursor: text;
+  }
+  .topbar-search input {
+    background: none; border: none; outline: none;
+    color: var(--paper); font-family: 'DM Sans', sans-serif;
+    font-size: 13px; width: 160px;
+  }
+  .topbar-search input::placeholder { color: rgba(247,243,238,0.4); }
+  .avatar {
+    width: 36px; height: 36px;
+    background: var(--teal);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+    color: white; cursor: pointer;
+    position: relative;
+  }
+  .user-menu {
+    position: absolute; top: 48px; right: 0;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: var(--shadow-lg);
+    width: 200px;
+    overflow: hidden;
+    display: none;
+    z-index: 200;
+  }
+  .user-menu.open { display: block; }
+  .user-menu-header {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .user-menu-header .name { font-weight: 600; font-size: 14px; }
+  .user-menu-header .email { font-size: 12px; color: var(--muted); }
+  .user-menu-item {
+    padding: 11px 16px;
+    font-size: 14px; cursor: pointer;
+    display: flex; align-items: center; gap: 10px;
+    color: var(--ink);
+    transition: background 0.15s;
+  }
+  .user-menu-item:hover { background: var(--cream); }
+  .user-menu-item.danger { color: var(--rust); }
+
+  /* LAYOUT */
+  .app-body {
+    display: flex; flex: 1;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 240px;
+    background: var(--white);
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+    flex-shrink: 0;
+  }
+  .sidebar-section { margin-bottom: 24px; }
+  .sidebar-label {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 20px;
+    margin-bottom: 8px;
+  }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 20px;
+    font-size: 14px; font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+  }
+  .sidebar-item:hover { color: var(--ink); background: var(--cream); }
+  .sidebar-item.active {
+    color: var(--teal);
+    background: rgba(26,95,110,0.06);
+    border-left-color: var(--teal);
+  }
+  .sidebar-item .icon { font-size: 16px; width: 20px; text-align: center; }
+  .sidebar-badge {
+    margin-left: auto;
+    background: var(--teal);
+    color: white;
+    font-size: 10px; font-weight: 700;
+    padding: 2px 7px; border-radius: 20px;
+  }
+
+  /* MAIN CONTENT */
+  .main-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px;
+  }
+
+  /* TAB PANELS */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* PAGE HEADER */
+  .page-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 32px;
+  }
+  .page-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; font-weight: 700;
+  }
+  .page-header p { font-size: 14px; color: var(--muted); margin-top: 4px; }
+  .btn-add {
+    padding: 11px 20px;
+    background: var(--teal);
+    color: white;
+    border: none; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+  }
+  .btn-add:hover { background: #1a6f80; transform: translateY(-1px); }
+
+  /* STAT CARDS */
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-bottom: 32px;
+  }
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    position: relative; overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .stat-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+  .stat-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 4px; height: 100%;
+    border-radius: 12px 0 0 12px;
+  }
+  .stat-card.gold::before { background: var(--gold); }
+  .stat-card.teal::before { background: var(--teal); }
+  .stat-card.rust::before { background: var(--rust); }
+  .stat-card.ink::before { background: var(--ink); }
+  .stat-card-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .stat-card-value { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; line-height: 1; }
+  .stat-card-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .stat-card-icon { position: absolute; top: 20px; right: 20px; font-size: 24px; opacity: 0.15; }
+
+  /* SECTION */
+  .section { margin-bottom: 32px; }
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; }
+  .link-btn { font-size: 13px; color: var(--teal); cursor: pointer; font-weight: 500; background: none; border: none; }
+  .link-btn:hover { text-decoration: underline; }
+
+  /* PAPER CARDS */
+  .papers-list { display: flex; flex-direction: column; gap: 12px; }
+  .paper-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: flex; gap: 16px; align-items: flex-start;
+    transition: box-shadow 0.2s, transform 0.2s;
+    cursor: pointer;
+  }
+  .paper-card:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+  .paper-icon {
+    width: 40px; height: 40px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .paper-icon.journal { background: rgba(201,168,76,0.12); }
+  .paper-icon.thesis { background: rgba(26,95,110,0.12); }
+  .paper-icon.patent { background: rgba(139,58,42,0.12); }
+  .paper-icon.conference { background: rgba(13,17,23,0.08); }
+  .paper-body { flex: 1; }
+  .paper-title { font-size: 14px; font-weight: 600; line-height: 1.4; margin-bottom: 4px; }
+  .paper-meta { font-size: 12px; color: var(--muted); display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .paper-meta span { display: flex; align-items: center; gap: 4px; }
+  .tag {
+    display: inline-block;
+    padding: 2px 9px; border-radius: 12px;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .tag.journal { background: rgba(201,168,76,0.15); color: #7a5a1a; }
+  .tag.thesis { background: rgba(26,95,110,0.12); color: var(--teal); }
+  .tag.patent { background: rgba(139,58,42,0.10); color: var(--rust); }
+  .tag.conference { background: rgba(13,17,23,0.07); color: var(--ink); }
+  .paper-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .icon-btn {
+    width: 30px; height: 30px; border-radius: 6px;
+    border: 1px solid var(--border);
+    background: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    transition: all 0.15s;
+    color: var(--muted);
+  }
+  .icon-btn:hover { background: var(--cream); color: var(--ink); }
+
+  /* TABLE */
+  .table-wrap { background: var(--white); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: var(--cream); }
+  th { padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  td { padding: 13px 16px; font-size: 13.5px; border-top: 1px solid var(--border); vertical-align: middle; }
+  tr:hover td { background: rgba(247,243,238,0.5); }
+  .status-badge {
+    display: inline-block; padding: 3px 10px; border-radius: 12px;
+    font-size: 11px; font-weight: 600;
+  }
+  .status-badge.approved { background: rgba(26,95,110,0.12); color: var(--teal); }
+  .status-badge.pending { background: rgba(201,168,76,0.15); color: #7a5a1a; }
+  .status-badge.rejected { background: rgba(139,58,42,0.10); color: var(--rust); }
+
+  /* MODULES GRID */
+  .modules-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .module-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: 12px;
+    padding: 22px; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .module-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); border-color: var(--teal-light); }
+  .module-card-icon { font-size: 28px; margin-bottom: 12px; }
+  .module-card-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .module-card-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* WELCOME BANNER */
+  .welcome-banner {
+    background: linear-gradient(135deg, var(--ink) 0%, #1a2535 60%, var(--teal) 100%);
+    border-radius: 14px;
+    padding: 28px 32px;
+    color: var(--paper);
+    margin-bottom: 28px;
+    position: relative; overflow: hidden;
+  }
+  .welcome-banner::after {
+    content: '📚';
+    position: absolute; right: 32px; top: 50%; transform: translateY(-50%);
+    font-size: 72px; opacity: 0.12;
+  }
+  .welcome-banner h2 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .welcome-banner p { font-size: 14px; opacity: 0.7; }
+
+  /* PROFILE PAGE */
+  .profile-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: 12px;
+    padding: 28px; margin-bottom: 20px;
+  }
+  .profile-header { display: flex; gap: 20px; align-items: center; margin-bottom: 24px; }
+  .profile-avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: var(--teal); display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 700; color: white; flex-shrink: 0;
+  }
+  .profile-info h2 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; }
+  .profile-info p { font-size: 14px; color: var(--muted); margin-top: 4px; }
+  .profile-tags { display: flex; gap: 8px; margin-top: 8px; }
+  .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .profile-field label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; display: block; }
+  .profile-field p { font-size: 14px; padding: 10px 14px; background: var(--cream); border-radius: 7px; }
+
+  /* LOGOUT */
+  #logoutPage { display: none; min-height: 100vh; align-items: center; justify-content: center; }
+  #logoutPage.active { display: flex; }
+  .logout-box {
+    text-align: center; max-width: 400px;
+    background: var(--white); border: 1px solid var(--border); border-radius: 16px;
+    padding: 48px 40px;
+    box-shadow: var(--shadow-lg);
+  }
+  .logout-box .icon { font-size: 56px; margin-bottom: 20px; }
+  .logout-box h2 { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; margin-bottom: 10px; }
+  .logout-box p { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+  .logout-actions { display: flex; gap: 12px; justify-content: center; }
+  .btn-secondary {
+    padding: 11px 24px; border: 1.5px solid var(--border); border-radius: 8px;
+    background: none; font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    color: var(--muted); transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--ink); color: var(--ink); }
+  .btn-danger {
+    padding: 11px 24px; border-radius: 8px; border: none;
+    background: var(--rust); color: white;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-danger:hover { background: #a0432f; }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(13,17,23,0.5);
+    display: none; align-items: center; justify-content: center;
+    z-index: 1000; backdrop-filter: blur(2px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white); border-radius: 14px;
+    padding: 32px; width: 560px; max-width: 95vw;
+    box-shadow: var(--shadow-lg);
+    animation: fadeIn 0.2s ease;
+  }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .modal-header h3 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; }
+  .close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--muted); }
+  .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group select {
+    width: 100%; padding: 13px 16px; border: 1.5px solid var(--border); border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--ink);
+    background: var(--paper); outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group select:focus { border-color: var(--teal); }
+  .form-group textarea {
+    width: 100%; padding: 13px 16px; border: 1.5px solid var(--border); border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--ink);
+    background: var(--paper); outline: none; resize: vertical; min-height: 80px;
+    transition: border-color 0.2s;
+  }
+  .form-group textarea:focus { border-color: var(--teal); }
+  .col-2 { grid-column: span 2; }
+  .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--ink); color: var(--paper);
+    padding: 14px 20px; border-radius: 10px;
+    font-size: 14px; box-shadow: var(--shadow-lg);
+    display: none; z-index: 2000;
+    animation: slideUp 0.3s ease;
+    max-width: 320px;
+  }
+  .toast.show { display: flex; align-items: center; gap: 10px; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .login-left { display: none; }
+    .login-right { width: 100%; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .sidebar { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ LOGIN PAGE ═══════════════════════════════════════ -->
+<div id="loginPage" class="page active">
+  <div class="login-left">
+    <div class="login-brand">
+      <div class="login-brand-icon">📚</div>
+      <div class="login-brand-name">
+        DRPRS
+        <span>Digital Research Paper Repository System</span>
+      </div>
+    </div>
+    <div class="login-headline">
+      Preserve.<br>Discover.<br><em>Advance.</em>
+    </div>
+    <p class="login-sub">A unified platform for collecting, managing, and sharing institutional scientific research achievements across disciplines.</p>
+    <div class="login-stats">
+      <div class="stat-item">
+        <div class="stat-num">3,778</div>
+        <div class="stat-label">Repositories</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">120+</div>
+        <div class="stat-label">Countries</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">5 M+</div>
+        <div class="stat-label">Papers</div>
+      </div>
+    </div>
+  </div>
+  <div class="login-right">
+    <h2>Welcome Back</h2>
+    <p>Sign in to access the repository system</p>
+
+    <div class="sidebar-label" style="margin-bottom:10px;">Sign in as</div>
+    <div class="role-select">
+      <div class="role-btn active" onclick="selectRole(this,'researcher')">
+        <span class="role-icon">🔬</span>Researcher
+      </div>
+      <div class="role-btn" onclick="selectRole(this,'librarian')">
+        <span class="role-icon">📖</span>Librarian
+      </div>
+      <div class="role-btn" onclick="selectRole(this,'admin')">
+        <span class="role-icon">🏛️</span>Administrator
+      </div>
+      <div class="role-btn" onclick="selectRole(this,'student')">
+        <span class="role-icon">🎓</span>Student
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>University Email / User ID</label>
+      <input type="email" id="emailInput" placeholder="wangL@whut.edu.cn" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="pwInput" placeholder="••••••••••" />
+    </div>
+    <div id="loginError" class="error-msg">⚠ Invalid credentials. Try demo@whut.edu.cn / password123</div>
+    <div class="form-options">
+      <label><input type="checkbox"> Remember me</label>
+      <a href="#">Forgot password?</a>
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Sign In to Repository →</button>
+    <div class="login-divider">— or —</div>
+    <button class="btn-primary" style="background:var(--teal)" onclick="demoLogin()">🚀 Try Demo Account</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ APP PAGE ═══════════════════════════════════════ -->
+<div id="appPage" class="page">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-brand-icon">📚</div>
+      DRPRS
+    </div>
+    <div class="topbar-nav">
+      <button class="nav-item active" onclick="showTab('dashboard',this)">Dashboard</button>
+      <button class="nav-item" onclick="showTab('repository',this)">Repository</button>
+      <button class="nav-item" onclick="showTab('projects',this)">Projects</button>
+      <button class="nav-item" onclick="showTab('evaluation',this)">Evaluation</button>
+      <button class="nav-item" onclick="showTab('profile',this)">Profile</button>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-search">
+        <span>🔍</span>
+        <input type="text" placeholder="Search papers, authors…" />
+      </div>
+      <div class="avatar" onclick="toggleMenu()" id="avatarBtn">WL</div>
+      <div class="user-menu" id="userMenu">
+        <div class="user-menu-header">
+          <div class="name" id="menuName">Wang Li</div>
+          <div class="email" id="menuEmail">demo@whut.edu.cn</div>
+        </div>
+        <div class="user-menu-item" onclick="showTab('profile',null)">👤 My Profile</div>
+        <div class="user-menu-item" onclick="showTab('repository',null)">📄 My Papers</div>
+        <div class="user-menu-item">⚙️ Settings</div>
+        <div class="user-menu-item danger" onclick="showLogout()">🚪 Sign Out</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-body">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Main Menu</div>
+        <div class="sidebar-item active" onclick="showTab('dashboard',null);sidebarActive(this)"><span class="icon">🏠</span> Dashboard</div>
+        <div class="sidebar-item" onclick="showTab('repository',null);sidebarActive(this)"><span class="icon">📄</span> Repository <span class="sidebar-badge">128</span></div>
+        <div class="sidebar-item" onclick="showTab('projects',null);sidebarActive(this)"><span class="icon">🔬</span> Research Projects</div>
+        <div class="sidebar-item" onclick="showTab('evaluation',null);sidebarActive(this)"><span class="icon">📊</span> Evaluation</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Modules</div>
+        <div class="sidebar-item" onclick="showTab('repository',null);sidebarActive(this)"><span class="icon">🏆</span> Achievements</div>
+        <div class="sidebar-item"><span class="icon">🔎</span> Query & Retrieval</div>
+        <div class="sidebar-item"><span class="icon">👥</span> Research Teams</div>
+        <div class="sidebar-item"><span class="icon">📥</span> Submissions <span class="sidebar-badge" style="background:var(--rust)">3</span></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Account</div>
+        <div class="sidebar-item" onclick="showTab('profile',null);sidebarActive(this)"><span class="icon">👤</span> My Profile</div>
+        <div class="sidebar-item danger" onclick="showLogout()" style="color:var(--rust)"><span class="icon">🚪</span> Sign Out</div>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-content">
+
+      <!-- DASHBOARD TAB -->
+      <div class="tab-panel active" id="tab-dashboard">
+        <div class="welcome-banner">
+          <h2>Good day, <span id="greetName">Wang Li</span> 👋</h2>
+          <p>Wuhan University of Technology · Library · Scientific Research Repository</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card gold">
+            <div class="stat-card-icon">📄</div>
+            <div class="stat-card-label">Total Papers</div>
+            <div class="stat-card-value">1,284</div>
+            <div class="stat-card-sub">+42 this month</div>
+          </div>
+          <div class="stat-card teal">
+            <div class="stat-card-icon">🔬</div>
+            <div class="stat-card-label">Active Projects</div>
+            <div class="stat-card-value">38</div>
+            <div class="stat-card-sub">6 pending approval</div>
+          </div>
+          <div class="stat-card rust">
+            <div class="stat-card-icon">👥</div>
+            <div class="stat-card-label">Researchers</div>
+            <div class="stat-card-value">217</div>
+            <div class="stat-card-sub">Across 14 departments</div>
+          </div>
+          <div class="stat-card ink">
+            <div class="stat-card-icon">📥</div>
+            <div class="stat-card-label">Downloads</div>
+            <div class="stat-card-value">8.4K</div>
+            <div class="stat-card-sub">This semester</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title">Recent Submissions</div>
+            <button class="link-btn" onclick="showTab('repository',null)">View all →</button>
+          </div>
+          <div class="papers-list">
+            <div class="paper-card">
+              <div class="paper-icon journal">📰</div>
+              <div class="paper-body">
+                <div class="paper-title">Construction of Service-oriented University Institutional Repository Integrating Scientific Research Management</div>
+                <div class="paper-meta">
+                  <span>✍️ Wang Li, Zhang Ronghui</span>
+                  <span>📅 2019</span>
+                  <span><span class="tag journal">Journal</span></span>
+                  <span>📥 342 downloads</span>
+                </div>
+              </div>
+              <div class="paper-actions">
+                <button class="icon-btn" title="Download">⬇️</button>
+                <button class="icon-btn" title="Cite">💬</button>
+              </div>
+            </div>
+            <div class="paper-card">
+              <div class="paper-icon thesis">🎓</div>
+              <div class="paper-body">
+                <div class="paper-title">Deep Learning Approaches for Structural Health Monitoring in Civil Engineering Applications</div>
+                <div class="paper-meta">
+                  <span>✍️ Li Mei</span>
+                  <span>📅 2024</span>
+                  <span><span class="tag thesis">Thesis</span></span>
+                  <span>📥 128 downloads</span>
+                </div>
+              </div>
+              <div class="paper-actions">
+                <button class="icon-btn">⬇️</button>
+                <button class="icon-btn">💬</button>
+              </div>
+            </div>
+            <div class="paper-card">
+              <div class="paper-icon patent">💡</div>
+              <div class="paper-body">
+                <div class="paper-title">Novel Composite Material for High-Temperature Resistance in Aerospace Structures</div>
+                <div class="paper-meta">
+                  <span>✍️ Chen Wei, Liu Yang</span>
+                  <span>📅 2023</span>
+                  <span><span class="tag patent">Patent</span></span>
+                  <span>📥 56 downloads</span>
+                </div>
+              </div>
+              <div class="paper-actions">
+                <button class="icon-btn">⬇️</button>
+                <button class="icon-btn">💬</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title">System Modules</div>
+          </div>
+          <div class="modules-grid">
+            <div class="module-card" onclick="showTab('repository',null)">
+              <div class="module-card-icon">🏆</div>
+              <div class="module-card-title">Scientific Research Achievement Management</div>
+              <div class="module-card-desc">Store, summarize, and manage research achievements. Auto-harvesting with professional auditing mechanism and flexible permission management.</div>
+            </div>
+            <div class="module-card" onclick="showTab('projects',null)">
+              <div class="module-card-icon">🔬</div>
+              <div class="module-card-title">Scientific Research Project Management</div>
+              <div class="module-card-desc">Process-based management of projects — from reporting, auditing, approval, novelty search to conclusion and publication.</div>
+            </div>
+            <div class="module-card" onclick="showTab('evaluation',null)">
+              <div class="module-card-icon">📊</div>
+              <div class="module-card-title">Scientific Research Evaluation and Analysis</div>
+              <div class="module-card-desc">Evaluate researchers, projects, and groups. ESI discipline contribution index, subject analysis, and academic influence metrics.</div>
+            </div>
+            <div class="module-card">
+              <div class="module-card-icon">🔎</div>
+              <div class="module-card-title">Query and Retrieval Module</div>
+              <div class="module-card-desc">Basic and advanced retrieval of documents. Browse by college, document type, author, source, age. ESI highly-cited paper queries.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPOSITORY TAB -->
+      <div class="tab-panel" id="tab-repository">
+        <div class="page-header">
+          <div>
+            <h1>Research Repository</h1>
+            <p>128 scientific research achievements on record</p>
+          </div>
+          <button class="btn-add" onclick="openModal()">+ Submit Achievement</button>
+        </div>
+
+        <div class="section">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Author(s)</th>
+                  <th>Type</th>
+                  <th>Year</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Construction of Service-oriented University Institutional Repository</strong></td>
+                  <td>Wang Li, Zhang Ronghui</td>
+                  <td><span class="tag journal">Journal</span></td>
+                  <td>2019</td>
+                  <td><span class="status-badge approved">Approved</span></td>
+                  <td><button class="icon-btn">⬇️</button> <button class="icon-btn">✏️</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Deep Learning for Structural Health Monitoring</strong></td>
+                  <td>Li Mei</td>
+                  <td><span class="tag thesis">Thesis</span></td>
+                  <td>2024</td>
+                  <td><span class="status-badge approved">Approved</span></td>
+                  <td><button class="icon-btn">⬇️</button> <button class="icon-btn">✏️</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Novel Composite Material for Aerospace Structures</strong></td>
+                  <td>Chen Wei, Liu Yang</td>
+                  <td><span class="tag patent">Patent</span></td>
+                  <td>2023</td>
+                  <td><span class="status-badge pending">Pending</span></td>
+                  <td><button class="icon-btn">⬇️</button> <button class="icon-btn">✏️</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Intelligent Traffic Flow Optimization Using Reinforcement Learning</strong></td>
+                  <td>Zhou Xin</td>
+                  <td><span class="tag conference">Conference</span></td>
+                  <td>2024</td>
+                  <td><span class="status-badge approved">Approved</span></td>
+                  <td><button class="icon-btn">⬇️</button> <button class="icon-btn">✏️</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Blockchain-based Academic Credential Verification System</strong></td>
+                  <td>Wu Fang, Zhang Min</td>
+                  <td><span class="tag journal">Journal</span></td>
+                  <td>2023</td>
+                  <td><span class="status-badge rejected">Under Review</span></td>
+                  <td><button class="icon-btn">⬇️</button> <button class="icon-btn">✏️</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Carbon Nanotube-based Energy Storage Systems</strong></td>
+                  <td>Huang Lei, Sun Bo</td>
+                  <td><span class="tag patent">Patent</span></td>
+                  <td>2022</td>
+                  <td><span class="status-badge approved">Approved</span></td>
+                  <td><button class="icon-btn">⬇️</button> <button class="icon-btn">✏️</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECTS TAB -->
+      <div class="tab-panel" id="tab-projects">
+        <div class="page-header">
+          <div>
+            <h1>Research Projects</h1>
+            <p>Process-based project management and tracking</p>
+          </div>
+          <button class="btn-add">+ New Project</button>
+        </div>
+        <div class="section">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Project Title</th>
+                  <th>Principal Investigator</th>
+                  <th>Stage</th>
+                  <th>Funding</th>
+                  <th>Deadline</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Smart Grid Energy Distribution Optimization</strong></td>
+                  <td>Prof. Chen Wei</td>
+                  <td>Approval</td>
+                  <td>¥ 850,000</td>
+                  <td>Dec 2025</td>
+                  <td><span class="status-badge pending">In Review</span></td>
+                </tr>
+                <tr>
+                  <td><strong>AI-Assisted Medical Imaging Diagnostics</strong></td>
+                  <td>Dr. Li Mei</td>
+                  <td>Novelty Search</td>
+                  <td>¥ 1,200,000</td>
+                  <td>Jun 2026</td>
+                  <td><span class="status-badge approved">Active</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Urban Water Quality Monitoring Network</strong></td>
+                  <td>Prof. Zhou Xin</td>
+                  <td>Conclusion</td>
+                  <td>¥ 520,000</td>
+                  <td>Mar 2025</td>
+                  <td><span class="status-badge approved">Completed</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Additive Manufacturing for Biomedical Implants</strong></td>
+                  <td>Dr. Wu Fang</td>
+                  <td>Reporting</td>
+                  <td>¥ 680,000</td>
+                  <td>Sep 2025</td>
+                  <td><span class="status-badge pending">Pending</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- EVALUATION TAB -->
+      <div class="tab-panel" id="tab-evaluation">
+        <div class="page-header">
+          <div>
+            <h1>Research Evaluation & Analysis</h1>
+            <p>ESI discipline contribution, subject analysis & academic impact</p>
+          </div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card gold">
+            <div class="stat-card-label">H-Index (Avg)</div>
+            <div class="stat-card-value">24</div>
+            <div class="stat-card-sub">Top researchers</div>
+          </div>
+          <div class="stat-card teal">
+            <div class="stat-card-label">ESI Highly Cited</div>
+            <div class="stat-card-value">17</div>
+            <div class="stat-card-sub">Papers this year</div>
+          </div>
+          <div class="stat-card rust">
+            <div class="stat-card-label">Total Citations</div>
+            <div class="stat-card-value">9,342</div>
+            <div class="stat-card-sub">All time</div>
+          </div>
+          <div class="stat-card ink">
+            <div class="stat-card-label">Impact Factor Avg</div>
+            <div class="stat-card-value">4.8</div>
+            <div class="stat-card-sub">Published journals</div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-title" style="margin-bottom:16px">Department Research Output</div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Department</th><th>Papers</th><th>Citations</th><th>ESI Papers</th><th>H-Index</th><th>Rank</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Computer Science & Technology</td><td>312</td><td>2,841</td><td>6</td><td>32</td><td>🥇 1</td></tr>
+                <tr><td>Materials Science</td><td>247</td><td>2,104</td><td>4</td><td>28</td><td>🥈 2</td></tr>
+                <tr><td>Civil Engineering</td><td>198</td><td>1,567</td><td>3</td><td>24</td><td>🥉 3</td></tr>
+                <tr><td>Electrical Engineering</td><td>176</td><td>1,380</td><td>2</td><td>21</td><td>4</td></tr>
+                <tr><td>Environmental Science</td><td>142</td><td>980</td><td>2</td><td>18</td><td>5</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFILE TAB -->
+      <div class="tab-panel" id="tab-profile">
+        <div class="page-header">
+          <div><h1>My Profile</h1><p>Basic data element module — personal academic information</p></div>
+          <button class="btn-add">✏️ Edit Profile</button>
+        </div>
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar">WL</div>
+            <div class="profile-info">
+              <h2 id="profileName">Wang Li</h2>
+              <p id="profileRole">Librarian · The Library of Wuhan University of Technology</p>
+              <div class="profile-tags">
+                <span class="tag journal">Digital Libraries</span>
+                <span class="tag thesis">Information Science</span>
+                <span class="tag conference">Repository Management</span>
+              </div>
+            </div>
+          </div>
+          <div class="profile-grid">
+            <div class="profile-field">
+              <label>Email</label>
+              <p id="profileEmail">10999472@qq.com</p>
+            </div>
+            <div class="profile-field">
+              <label>Department</label>
+              <p>The Library, WHUT</p>
+            </div>
+            <div class="profile-field">
+              <label>Research Fields</label>
+              <p>Institutional Repository, Scientific Research Management, Digital Libraries</p>
+            </div>
+            <div class="profile-field">
+              <label>Academic History</label>
+              <p>M.Lib. Information Science · Wuhan University</p>
+            </div>
+            <div class="profile-field">
+              <label>Publications</label>
+              <p>8 journal papers, 2 conference papers</p>
+            </div>
+            <div class="profile-field">
+              <label>Current Projects</label>
+              <p>2 active, 1 under review</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end main-content -->
+  </div><!-- end app-body -->
+</div>
+
+<!-- ═══════════════════════════════════════ LOGOUT PAGE ═══════════════════════════════════════ -->
+<div id="logoutPage" class="page">
+  <div class="logout-box">
+    <div class="icon">👋</div>
+    <h2>Sign Out?</h2>
+    <p>You are about to sign out of the Digital Research Paper Repository System. Any unsaved changes will be lost.</p>
+    <div class="logout-actions">
+      <button class="btn-secondary" onclick="cancelLogout()">Cancel</button>
+      <button class="btn-danger" onclick="confirmLogout()">Yes, Sign Out</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUBMIT MODAL -->
+<div class="modal-overlay" id="submitModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Submit Research Achievement</h3>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-grid">
+      <div class="form-group col-2">
+        <label>Title of Achievement</label>
+        <input type="text" placeholder="Full title of your paper, patent or thesis" />
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select>
+          <option>Journal Article</option>
+          <option>Conference Paper</option>
+          <option>Thesis / Dissertation</option>
+          <option>Patent</option>
+          <option>Research Report</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Year</label>
+        <input type="number" placeholder="2024" />
+      </div>
+      <div class="form-group col-2">
+        <label>Author(s)</label>
+        <input type="text" placeholder="e.g. Wang Li, Zhang Ronghui" />
+      </div>
+      <div class="form-group col-2">
+        <label>Abstract / Description</label>
+        <textarea placeholder="Briefly describe this achievement…"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" style="width:auto;padding:11px 28px" onclick="submitAchievement()">Submit for Review</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ Achievement submitted successfully!</div>
+
+<script>
+  let currentRole = 'researcher';
+  let prevTab = 'dashboard';
+
+  function selectRole(el, role) {
+    document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    currentRole = role;
+  }
+
+  function doLogin() {
+    const email = document.getElementById('emailInput').value;
+    const pw = document.getElementById('pwInput').value;
+    const err = document.getElementById('loginError');
+    if (!email || !pw) { err.style.display='block'; return; }
+    err.style.display = 'none';
+    loginSuccess(email);
+  }
+
+  function demoLogin() {
+    loginSuccess('demo@whut.edu.cn');
+  }
+
+  function loginSuccess(email) {
+    const name = email.includes('demo') ? 'Wang Li' : email.split('@')[0];
+    document.getElementById('greetName').textContent = name;
+    document.getElementById('menuName').textContent = name;
+    document.getElementById('menuEmail').textContent = email;
+    document.getElementById('profileName').textContent = name;
+    document.getElementById('profileEmail').textContent = email;
+    const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    document.getElementById('avatarBtn').textContent = initials;
+    document.getElementById('profileAvatar').textContent = initials;
+    showPage('appPage');
+  }
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function showTab(name, navEl) {
+    document.querySelectorAll('.tab-panel').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-'+name).classList.add('active');
+    if (navEl) {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      navEl.classList.add('active');
+    }
+    document.getElementById('userMenu').classList.remove('open');
+  }
+
+  function sidebarActive(el) {
+    document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function toggleMenu() {
+    document.getElementById('userMenu').classList.toggle('open');
+  }
+
+  function showLogout() {
+    document.getElementById('userMenu').classList.remove('open');
+    showPage('logoutPage');
+  }
+
+  function cancelLogout() {
+    showPage('appPage');
+  }
+
+  function confirmLogout() {
+    document.getElementById('emailInput').value = '';
+    document.getElementById('pwInput').value = '';
+    showPage('loginPage');
+    showTab('dashboard', document.querySelector('.nav-item'));
+  }
+
+  function openModal() {
+    document.getElementById('submitModal').classList.add('open');
+  }
+  function closeModal() {
+    document.getElementById('submitModal').classList.remove('open');
+  }
+  function submitAchievement() {
+    closeModal();
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  document.addEventListener('click', function(e) {
+    const menu = document.getElementById('userMenu');
+    const avatar = document.getElementById('avatarBtn');
+    if (!menu.contains(e.target) && e.target !== avatar) menu.classList.remove('open');
+  });
+</script>
+</body>
+</html>
